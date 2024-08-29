@@ -45,13 +45,12 @@ def check_model(
 
 def check_all_assets(base_dir: Path, sha256_map: Dict[str, str], update=False) -> bool:
     logger.get_logger().info("checking assets...")
+
     current_dir = base_dir / "asset"
     names = [
         "Decoder.pt",
-        "DVAE.pt",
+        "DVAE_full.pt",
         "GPT.pt",
-        "spk_stat.pt",
-        "tokenizer.pt",
         "Vocos.pt",
     ]
     for model in names:
@@ -61,19 +60,16 @@ def check_all_assets(base_dir: Path, sha256_map: Dict[str, str], update=False) -
         ):
             return False
 
-    logger.get_logger().info("checking configs...")
-    current_dir = base_dir / "config"
+    current_dir = base_dir / "asset" / "tokenizer"
     names = [
-        "decoder.yaml",
-        "dvae.yaml",
-        "gpt.yaml",
-        "path.yaml",
-        "vocos.yaml",
+        "special_tokens_map.json",
+        "tokenizer_config.json",
+        "tokenizer.json",
     ]
     for model in names:
         menv = model.replace(".", "_")
         if not check_model(
-            current_dir, model, sha256_map[f"sha256_config_{menv}"], update
+            current_dir, model, sha256_map[f"sha256_asset_tokenizer_{menv}"], update
         ):
             return False
 
@@ -117,7 +113,7 @@ def download_dns_yaml(url: str, folder: str):
         logger.get_logger().info(f"downloaded into {folder}")
 
 
-def download_all_assets(tmpdir: str, version="0.2.5"):
+def download_all_assets(tmpdir: str, version="0.2.7"):
     import subprocess
     import platform
 
@@ -156,13 +152,13 @@ def download_all_assets(tmpdir: str, version="0.2.5"):
     except Exception:
         BASE_URL = "https://raw.gitcode.com/u011570312/RVC-Models-Downloader/assets/"
         suffix = {
-            "darwin_amd64": "555",
-            "darwin_arm64": "556",
-            "linux_386": "557",
-            "linux_amd64": "558",
-            "linux_arm64": "559",
-            "windows_386": "562",
-            "windows_amd64": "563",
+            "darwin_amd64": "987",
+            "darwin_arm64": "988",
+            "linux_386": "989",
+            "linux_amd64": "990",
+            "linux_arm64": "991",
+            "windows_386": "992",
+            "windows_amd64": "993",
         }[f"{system_type}_{architecture}"]
         RVCMD_URL = BASE_URL + suffix
         download_dns_yaml(
